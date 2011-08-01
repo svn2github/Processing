@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Los_Angeles');
 
 //// load offline functions
 require 'offline.inc.php';
@@ -59,6 +60,9 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 <link rel="stylesheet" href="<?php echo SITE_ROOT?>css/mobile.css" type="text/css">
 </head>
 <body>
+<div id="notice">
+  <b>Notice:</b> This is a static archive of the Mobile Processing website, as the project is no longer significantly active.  All forms and the Discourse boards are no longer functional, and the mobile website at http://wapmp.at/ is no longer available.  Please visit the <a href="http://groups.google.com/group/mobile-processing">Mobile Processing Google Group</a> for any remaining discussions and the <a href="http://processing.org">Processing</a> website for the latest news about Processing.
+</div>
 <div id="head"> 
     <img src="<?php echo SITE_ROOT?>images/mobile.png">
 </div>
@@ -112,7 +116,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 <?php     } ?>
     <span class="backslash">\</span>
 <?php     if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'discourse/') === false) { ?>
-    <a href="<?php echo SITE_ROOT ?>discourse/index.php">Discourse</a>
+    <a href="http://groups.google.com/group/mobile-processing">Discourse</a>
 <?php     } else { ?>
     Discourse
 <?php     } ?>

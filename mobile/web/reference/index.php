@@ -64,18 +64,18 @@ while ($filename !== false) {
                 continue; 	 
             } 	 
         } 	 
-        $dom = domxml_open_file($fullpath ."/API/".$filename); 	 
+        $dom = DOMDocument::load($fullpath ."/API/".$filename);
         
         $shortname = substr($filename, 0, strlen($filename) - 4); 	 
         
-        $name = $dom->get_elements_by_tagname('name'); 	 
-        $name = trim($name[0]->get_content()); 	 
+        $name = $dom->getElementsByTagName('name');
+        $name = trim($name->item(0)->nodeValue);
         
-        $cat = $dom->get_elements_by_tagname('category'); 	 
-        $cat = trim($cat[0]->get_content()); 	 
+        $cat = $dom->getElementsByTagName('category');
+        $cat = trim($cat->item(0)->nodeValue);
         
-        $subcat = $dom->get_elements_by_tagname('subcategory'); 	 
-        $subcat = trim($subcat[0]->get_content()); 	 
+        $subcat = $dom->getElementsByTagName('subcategory');
+        $subcat = trim($subcat->item(0)->nodeValue);
         
         $categories[$cat][$subcat][] = $shortname."\n".$name; 	 
     } 	 

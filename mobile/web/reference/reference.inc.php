@@ -2,23 +2,23 @@
 
 function GetContentAsString($node) {   
     $st = "";
-    foreach ($node->child_nodes() as $cnode)
-        if ($cnode->node_type()==XML_TEXT_NODE)
-            $st .= $cnode->node_value();
-        else if ($cnode->node_type()==XML_ELEMENT_NODE) {
-            $st .= "<" . $cnode->node_name();
-            if ($attribnodes=$cnode->attributes()) {
+    foreach ($node->childNodes as $cnode)
+        if ($cnode->nodeType==XML_TEXT_NODE)
+            $st .= $cnode->nodeValue;
+        else if ($cnode->nodeType==XML_ELEMENT_NODE) {
+            $st .= "<" . $cnode->nodeName;
+            if ($attribnodes=$cnode->attributes) {
                 $st .= " ";
                 foreach ($attribnodes as $anode)
-                    $st .= $anode->node_name() . "='" .
-                        $anode-node_value() . "'";
+                    $st .= $anode->nodeName . "='" .
+                        $anode->nodeValue . "'";
             }   
             $nodeText = GetContentAsString($cnode);
             if (empty($nodeText) && !$attribnodes)
                 $st .= " />";        // unary
             else
                 $st .= ">" . $nodeText . "</" .
-                    $cnode->node_name() . ">";
+                    $cnode->nodeName . ">";
         }
     return $st;
 }
@@ -27,26 +27,26 @@ if (is_null($fullpath)) {
     $fullpath = dirname(__FILE__);
 }
 
-$dom = domxml_open_file($fullpath ."/API/". $_GET['name'] .".xml");
-$root = $dom->document_element();
+$dom = DOMDocument::load($fullpath ."/API/". $_GET['name'] .".xml");
 $value = array();
-$child = $root->first_child();
+$child = $dom->firstChild->firstChild;
 
 while ($child) {
-    $tag = $child->node_name();
+    $tag = $child->nodeName;
+    error_log($tag);
     if (($tag == 'example') || ($tag == 'parameter') ||
         ($tag == 'method') || ($tag == 'cparameter') ||
         ($tag == 'field')) {
         $subvalue = array();
-        $gchild = $child->first_child();
+        $gchild = $child->firstChild;
         while ($gchild) {
-            $gtag = $gchild->node_name();
-            $content = trim($gchild->get_content());
+            $gtag = $gchild->nodeName;
+            $content = trim($gchild->nodeValue);
             if ($content != "") {
                 $subvalue[$gtag] = $content;
             }
 
-            $gchild = $gchild->next_sibling();
+            $gchild = $gchild->nextSibling;
         }
         if (count($subvalue) > 0) {
             $value[$tag][] = $subvalue;
@@ -70,7 +70,7 @@ while ($child) {
         }
     }
 
-    $child = $child->next_sibling();
+    $child = $child->nextSibling;
 }
 
 //// check for parent, if any
