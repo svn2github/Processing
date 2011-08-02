@@ -102,12 +102,14 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 <?php     } else { ?>
     Download
 <?php     } ?>
+<?php /*
     <span class="backslash">\</span>
 <?php     if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'phones/') === false) { ?>
     <a href="<?php echo SITE_ROOT ?>phones/index.php">Phones</a>
 <?php     } else { ?>
     Phones
 <?php     } ?>
+ */ ?>
     <span class="backslash">\</span>
 <?php     if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'faq/') === false) { ?>
     <a href="<?php echo SITE_ROOT ?>faq/index.<?php echo $ext ?>">FAQ</a>
