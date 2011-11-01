@@ -245,6 +245,11 @@ ${line}
 							match="##project.version##"
 							replace="${project.version}"
 							flags="g" />
+		
+		<replaceregexp file="${project.dist.version}/web/index.html"
+		                            match="##project.prettyversion##"
+		                            replace="${project.prettyversion}"
+		                            flags="g" />
   	
 		<replaceregexp file="${project.dist.version}/web/index.html"
 							match="##author.url##"
