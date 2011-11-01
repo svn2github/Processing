@@ -96,7 +96,7 @@ ${line}
 	  	<antcall target="generate.jar"><param name="folder" value="library"/></antcall>
 	  	<antcall target="generate.javadoc" />
 		<antcall target="copyToSketchbook"><param name="folder" value="libraries"/></antcall>
-		<antcall target="generate.libprops"></antcall>
+		<antcall target="generate.libprops" />
 		<antcall target="generate.distribution" />
 		<antcall target="generate.install.library" />
 		<antcall target="generate.web" />
@@ -106,7 +106,7 @@ ${line}
 	
 	
 	<target name="generate.libprops" if="is.normal">
-		<property name="libprops.destination" location="${project.tmp}/${project.name}/${folder}/library.properties"/>
+		<property name="libprops.destination" location="${project.tmp}/${project.name}/library.properties"/>
 		<copy file="${libprops.source}" tofile="${libprops.destination}" />
 		<replaceregexp file="${libprops.destination}" match="##project.name##" replace="${project.name}" flags="g" />
 		<replaceregexp file="${libprops.destination}" match="##author.name##" replace="${author.name}" flags="g" />
@@ -246,10 +246,10 @@ ${line}
 							replace="${project.version}"
 							flags="g" />
 		
-		<replaceregexp file="${project.dist.version}/web/index.html"
-		                            match="##project.prettyversion##"
-		                            replace="${project.prettyversion}"
-		                            flags="g" />
+	     <replaceregexp file="${project.dist.version}/web/index.html"
+	                        match="##project.prettyversion##"
+	                        replace="${project.prettyversion}"
+	                        flags="g" />
   	
 		<replaceregexp file="${project.dist.version}/web/index.html"
 							match="##author.url##"
@@ -321,16 +321,24 @@ ${line}
 	
 	<target name="generate.zip" if="is.normal">
 		<!-- zip the distribution of the library -->
-  		<move todir="${project.dist.version}/tmp/${project.name}-${project.version}/${project.name}">
+		
+		<!--<move file="${project.dist.version}/${project.name}/library.properties" tofile="${project.dist.version}/tmp/${project.name}-${project.version}/${project.name}.txt" />-->
+		        
+		<move todir="${project.dist.version}/tmp/${project.name}-${project.version}">
   			<fileset dir="${project.dist.version}/${project.name}" />
-  		</move> 
+  		</move>
   		
-  		<move file="${install.destination}" tofile="${project.dist.version}/tmp/${project.name}-${project.version}/INSTALL.txt" />
-	  	<zip destfile="${project.dist.version}/${project.name}-${project.version}.zip"
+  		<copy file="${project.dist.version}/tmp/${project.name}-${project.version}/library.properties" tofile="${project.dist.version}/web/download/${project.name}-${project.version}.txt" />
+		<copy file="${project.dist.version}/tmp/${project.name}-${project.version}/library.properties" tofile="${project.dist.version}/web/download/${project.name}-latest.txt" />
+		        
+		<zip destfile="${project.dist.version}/${project.name}-${project.version}.zip"
   	       basedir="${project.dist.version}/tmp/${project.name}-${project.version}"
   	       excludes="**/.DS_Store"
 		/>
-		<move file="${project.dist.version}/${project.name}-${project.version}.zip" todir="${project.dist.version}/web/download" />
+		
+        <move file="${project.dist.version}/${project.name}-${project.version}.zip" todir="${project.dist.version}/web/download" />
+		<copy file="${project.dist.version}/web/download/${project.name}-${project.version}.zip" tofile="${project.dist.version}/web/download/${project.name}-latest.zip" />
+		
 		<move todir="${project.dist.version}">
 			<fileset dir="${project.dist.version}/web" />
 		</move>
@@ -400,9 +408,8 @@ ${line}
 			</if>
 	</target>
 	
-	
 	<target name="clean" depends="library.run">
-		<!-- <delete dir="${project.bin}"/> -->
+		<delete dir="${project.bin}"/>
 		<delete dir="${project.tmp}"/>
 		<echo>
 		
