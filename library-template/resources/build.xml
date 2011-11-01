@@ -5,10 +5,9 @@
 		Properties for your project should be set and modified in the  
 		build.properties file (located in the same folder as this build.xml file).
 		
-		
-		This file should not be edited, only if you know what you are doing.
-		if you have recommendations for improvements, please let andreas know 
-		at andi@sojamo.de
+		THIS FILE SHOULD NOT BE EDITED, unless you know what you are doing.
+		If you have recommendations for improvements, please let Elie know 
+		at prisonerjohn@gmail.com
 -->
     
 	
@@ -43,7 +42,7 @@
 	<property name="project.dist.version" location="distribution/${project.name}-${project.version}"/>
 	<property name="install.source" location="resources/install_instructions.txt"/>
 	<property name="install.destination" location="${project.dist.version}/INSTALL.txt"/>
-	<property name="libprops.source" location="resources/library.properties.txt"/>
+	<property name="libprops.source" location="resources/library.properties"/>
 	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
@@ -96,13 +95,27 @@ ${line}
 		<antcall target="compile" />
 	  	<antcall target="generate.jar"><param name="folder" value="library"/></antcall>
 	  	<antcall target="generate.javadoc" />
-		<antcall target="generate.libprops"><param name="folder" value="library"/></antcall>
 		<antcall target="copyToSketchbook"><param name="folder" value="libraries"/></antcall>
+		<antcall target="generate.libprops"></antcall>
 		<antcall target="generate.distribution" />
 		<antcall target="generate.install.library" />
 		<antcall target="generate.web" />
 	  	<antcall target="generate.zip" />	
 	  	<delete dir="${project.tmp}"/>
+	</target>
+	
+	
+	<target name="generate.libprops" if="is.normal">
+		<property name="libprops.destination" location="${project.tmp}/${project.name}/${folder}/library.properties"/>
+		<copy file="${libprops.source}" tofile="${libprops.destination}" />
+		<replaceregexp file="${libprops.destination}" match="##project.name##" replace="${project.name}" flags="g" />
+		<replaceregexp file="${libprops.destination}" match="##author.name##" replace="${author.name}" flags="g" />
+		<replaceregexp file="${libprops.destination}" match="##author.url##" replace="${author.url}" flags="g" />
+		<replaceregexp file="${libprops.destination}" match="##library.url##" replace="${library.url}" flags="g" />
+		<replaceregexp file="${libprops.destination}" match="##library.category##" replace="${library.category}" flags="g" />
+		<replaceregexp file="${libprops.destination}" match="##library.sentence##" replace="${library.sentence}" flags="g" />
+		<replaceregexp file="${libprops.destination}" match="##version##" replace="${project.version}" flags="g" />
+		<replaceregexp file="${libprops.destination}" match="##prettyversion##" replace="${project.prettyversion}" flags="g" />	
 	</target>
 		
 	
@@ -122,6 +135,7 @@ ${line}
 			<classpath>
 				<path refid="classpath"/>
 			</classpath>
+			<compilerarg value="-Xlint"/>
 		</javac>
 		<copy todir="${project.bin.data}">
 			<fileset dir="${project.data}" excludes="README" />
@@ -193,16 +207,6 @@ ${line}
 			</fileset>
 	 	</javadoc>
 	</target>
-	
-	
-	
-	<target name="generate.libprops" if="is.normal">
-		<property name="libprops.destination" location="${project.tmp}/${project.name}/${folder}/library.properties"/>
-		<copy file="${libprops.source}" tofile="${libprops.destination}" />
-		<replaceregexp file="${libprops.destination}" match="##name##" replace="${project.name}" flags="g" />
-		<replaceregexp file="${libprops.destination}" match="##version##" replace="${project.version}" flags="g" />
-	</target>
-	
 	
 	
 	<target name="generate.web" if="is.normal">
