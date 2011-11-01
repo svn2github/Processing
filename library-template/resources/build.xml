@@ -43,6 +43,7 @@
 	<property name="project.dist.version" location="distribution/${project.name}-${project.version}"/>
 	<property name="install.source" location="resources/install_instructions.txt"/>
 	<property name="install.destination" location="${project.dist.version}/INSTALL.txt"/>
+	<property name="libprops.source" location="resources/library.properties.txt"/>
 	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
@@ -95,6 +96,7 @@ ${line}
 		<antcall target="compile" />
 	  	<antcall target="generate.jar"><param name="folder" value="library"/></antcall>
 	  	<antcall target="generate.javadoc" />
+		<antcall target="generate.libprops"><param name="folder" value="library"/></antcall>
 		<antcall target="copyToSketchbook"><param name="folder" value="libraries"/></antcall>
 		<antcall target="generate.distribution" />
 		<antcall target="generate.install.library" />
@@ -191,6 +193,16 @@ ${line}
 			</fileset>
 	 	</javadoc>
 	</target>
+	
+	
+	
+	<target name="generate.libprops" if="is.normal">
+		<property name="libprops.destination" location="${project.tmp}/${project.name}/${folder}/library.properties"/>
+		<copy file="${libprops.source}" tofile="${libprops.destination}" />
+		<replaceregexp file="${libprops.destination}" match="##name##" replace="${project.name}" flags="g" />
+		<replaceregexp file="${libprops.destination}" match="##version##" replace="${project.version}" flags="g" />
+	</target>
+	
 	
 	
 	<target name="generate.web" if="is.normal">
