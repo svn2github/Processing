@@ -39,7 +39,7 @@
 	<property name="project.examples" location="examples"/>
 	<property name="project.reference" location="reference"/>
 	<property name="project.dist" location="distribution"/>
-	<property name="project.dist.version" location="distribution/${project.name}-${project.version}"/>
+	<property name="project.dist.version" location="distribution/${project.name}-${library.version}"/>
 	<property name="install.source" location="resources/install_instructions.txt"/>
 	<property name="install.destination" location="${project.dist.version}/INSTALL.txt"/>
 	<property name="libprops.source" location="resources/library.properties"/>
@@ -66,13 +66,13 @@
 	
 	<target name="init"> 
 		<echo>${line}
-	building a processing library, ${project.name} ${project.version}
+	Building the Processing library ${project.name} ${library.version}
 ${line}
-	src path	${project.src}
-	bin path 	${project.bin}
+	src path        ${project.src}
+	bin path        ${project.bin}
 	classpath.local	${classpath.local.location}
-	sketchbook	${sketchbook.location}
-	java version	${java.target.version}
+	sketchbook      ${sketchbook.location}
+	java version    ${java.target.version}
 ${line}
 	</echo>
 	
@@ -91,7 +91,7 @@ ${line}
 	<target name="library.run" depends="library.init"> 
 		<echo message="building library ..." />
 		<antcall target="generate.structure"><param name="folder" value="library"/></antcall>
-		<antcall target="parse.source" />
+		<antcall target="generate.source" />
 		<antcall target="compile" />
 	  	<antcall target="generate.jar"><param name="folder" value="library"/></antcall>
 	  	<antcall target="generate.javadoc" />
@@ -105,19 +105,14 @@ ${line}
 	</target>
 	
 	
+	
 	<target name="generate.libprops" if="is.normal">
 		<property name="libprops.destination" location="${project.tmp}/${project.name}/library.properties"/>
 		<copy file="${libprops.source}" tofile="${libprops.destination}" />
-		<replaceregexp file="${libprops.destination}" match="##project.name##" replace="${project.name}" flags="g" />
-		<replaceregexp file="${libprops.destination}" match="##author.name##" replace="${author.name}" flags="g" />
-		<replaceregexp file="${libprops.destination}" match="##author.url##" replace="${author.url}" flags="g" />
-		<replaceregexp file="${libprops.destination}" match="##library.url##" replace="${library.url}" flags="g" />
-		<replaceregexp file="${libprops.destination}" match="##library.category##" replace="${library.category}" flags="g" />
-		<replaceregexp file="${libprops.destination}" match="##library.sentence##" replace="${library.sentence}" flags="g" />
-		<replaceregexp file="${libprops.destination}" match="##version##" replace="${project.version}" flags="g" />
-		<replaceregexp file="${libprops.destination}" match="##prettyversion##" replace="${project.prettyversion}" flags="g" />	
+		<antcall target="parse.file"><param name="file" value="${libprops.destination}"/></antcall>
 	</target>
 		
+	
 	
 	<target name="copyToSketchbook">
 		<echo message="copying files to the ${folder} folder in your sketchbook." />
@@ -170,10 +165,10 @@ ${line}
 	</target>
 	
 	
-	<target name="parse.source" if="is.normal">
+	<target name="generate.source" if="is.normal">
 		<path id="src.contents"><fileset dir="${project.tmp}/${project.name}/src" includes="**/*.java" /></path>
 		<property name="src.list" refid="src.contents" />
-		<foreach list="${src.list}" param="file" target="versionSourcefile" delimiter=":" />
+		<foreach list="${src.list}" param="file" target="parse.file" delimiter=":" />
 	</target>
 	
 	
@@ -189,7 +184,7 @@ ${line}
 	
 	<target name="generate.javadoc" if="is.normal">
 	  	<!-- create the java reference of the library -->
-		<javadoc bottom="processing library ${project.name} by ${author.name}. ${project.copyright}" 
+		<javadoc bottom="Processing library ${project.name} by ${author.name}. ${library.copyright}" 
 				classpath="${classpath.local.location}/core.jar;{project.bin}" 
 				destdir="${project.tmp}/${project.name}/reference" 
 				verbose="false" 
@@ -224,120 +219,73 @@ ${line}
   			<fileset dir="${project.web}" />
 	  	</copy>
 	  	
-	  	<!--
-  				format the index.html file. 
-			  	regular expressions are used to parse the web index.html file. 
-			  	key words starting and ending with ## are replaced by values 
-			  	defined earlier in the beginning of this build file.
-	  	-->
-  	
-  		<replaceregexp file="${project.dist.version}/web/index.html"
-  	                         match="##project.name##"
-  	                         replace="${project.name}"
-  	                         flags="g" />
-  	
-	  	<replaceregexp file="${project.dist.version}/web/index.html"
-							match="##author.name##"
-							replace="${author.name}"
-							flags="g" />
-  	
-	  	<replaceregexp file="${project.dist.version}/web/index.html"
-							match="##project.version##"
-							replace="${project.version}"
-							flags="g" />
-		
-	     <replaceregexp file="${project.dist.version}/web/index.html"
-	                        match="##project.prettyversion##"
-	                        replace="${project.prettyversion}"
-	                        flags="g" />
-  	
-		<replaceregexp file="${project.dist.version}/web/index.html"
-							match="##author.url##"
-  							replace="${author.url}"
-							flags="g" />
-  	
-	  	<replaceregexp file="${project.dist.version}/web/index.html"
-  							match="##date##"
-  	  						replace="${date}"
-  	  						flags="g" />
-  	  						
-  		 <replaceregexp file="${project.dist.version}/web/index.html"
-  							match="##project.keywords##"
-  	  						replace="${project.keywords}"
-  	  						flags="g" />
-  	  						
-  	  						
-	  	 <replaceregexp file="${project.dist.version}/web/index.html"
-  							match="##tested.platform##"
-  	  						replace="${tested.platform}"
-  	  						flags="g" />
-  	  						
-  		 <replaceregexp file="${project.dist.version}/web/index.html"
-  							match="##tested.processingversion##"
-  	  						replace="${tested.processingversion}"
-  	  						flags="g" />
-  	  						
-	  	 <replaceregexp file="${project.dist.version}/web/index.html"
-  							match="##project.dependencies##"
-  	  						replace="${project.dependencies}"
-  	  						flags="g" />
-  	  						
-	  	 <replaceregexp file="${project.dist.version}/web/index.html"
-  							match="##source.host##"
-  	  						replace="${source.host}"
-  	  						flags="g" />
-  	  						
-	  	 <replaceregexp file="${project.dist.version}/web/index.html"
-  							match="##source.url##"
-  	  						replace="${source.url}"
-  	  						flags="g" />
-  	  						
-	  	 <replaceregexp file="${project.dist.version}/web/index.html"
-  							match="##source.repository##"
-  	  						replace="${source.repository}"
-  	  						flags="g" />
-  	  						
-  	  	<replaceregexp file="${project.dist.version}/web/index.html"
-  							match="##project.copyright##"
-  	  						replace="${project.copyright}"
-  	  						flags="g" />
+	  	<antcall target="parse.file"><param name="file" value="${project.dist.version}/web/index.html"/></antcall>
 		
 		<antcall target="processExamples" />
 		
-		<replaceregexp file="${project.dist.version}/web/index.html"
-  	  							match="##project.examples##"
-  	  	  						replace=""
-  	  	  						flags="g" />
+		<replaceregexp file="${project.dist.version}/web/index.html" match="##examples##" replace="" flags="g" />
 	</target>
+	
+	
+    
+    <!-- find and replace ##placeholder## keywords in a file -->
+    <target name="parse.file">
+        <echo message="${file}" />
+        
+        <replaceregexp file="${file}" match="##date##" replace="${date}" flags="g" />
+        <replaceregexp file="${file}" match="##copyright##" replace="${library.copyright}" flags="g" />
+        
+    	<replaceregexp file="${file}" match="##author##" replace="${author.name} ${author.url}" flags="g" />
+    	<replaceregexp file="${file}" match="##author.name##" replace="${author.name}" flags="g" />
+    	<replaceregexp file="${file}" match="##author.url##" replace="${author.url}" flags="g" />
+    	        
+    	<replaceregexp file="${file}" match="##library.name##" replace="${project.name}" flags="g" />
+    	<replaceregexp file="${file}" match="##project.name##" replace="${project.name}" flags="g" />
+    	        
+        <replaceregexp file="${file}" match="##library.version##" replace="${library.version}" flags="g" />
+        <replaceregexp file="${file}" match="##library.prettyVersion##" replace="${library.prettyVersion}" flags="g" /> 
+        
+        <replaceregexp file="${file}" match="##library.url##" replace="${library.url}" flags="g" />
+        <replaceregexp file="${file}" match="##library.category##" replace="${library.category}" flags="g" />
+        <replaceregexp file="${file}" match="##library.sentence##" replace="${library.sentence}" flags="g" />
+    	<replaceregexp file="${file}" match="##library.keywords##" replace="${library.keywords}" flags="g" />
+        <replaceregexp file="${file}" match="##library.dependencies##" replace="${library.dependencies}" flags="g" />
+    	
+    	<replaceregexp file="${file}" match="##source.host##" replace="${source.host}" flags="g" />
+    	<replaceregexp file="${file}" match="##source.url##" replace="${source.url}" flags="g" />
+    	<replaceregexp file="${file}" match="##source.repository##" replace="${source.repository}" flags="g" />
+    	
+    	<replaceregexp file="${file}" match="##tested.platform##" replace="${tested.platform}" flags="g" />
+    	<replaceregexp file="${file}" match="##tested.processingVersion##" replace="${tested.processingVersion}" flags="g" />
+    </target>
 	
 	
 	
 	<target name="generate.install.library" if="is.normal">	
 		<copy file="${install.source}" tofile="${project.dist.version}/INSTALL.txt" />
-		<replaceregexp file="${install.destination}" match="##name##" replace="${project.name}" flags="g" />
-		<replaceregexp file="${install.destination}" match="##folder##" replace="libraries" flags="g" />
+		
+		<antcall target="parse.file"><param name="file" value="${install.destination}"/></antcall>
 	</target>	
+	
 	
 	
 	<target name="generate.zip" if="is.normal">
 		<!-- zip the distribution of the library -->
 		
-		<!--<move file="${project.dist.version}/${project.name}/library.properties" tofile="${project.dist.version}/tmp/${project.name}-${project.version}/${project.name}.txt" />-->
-		        
-		<move todir="${project.dist.version}/tmp/${project.name}-${project.version}">
+		<move todir="${project.dist.version}/tmp/${project.name}-${library.version}">
   			<fileset dir="${project.dist.version}/${project.name}" />
   		</move>
   		
-  		<copy file="${project.dist.version}/tmp/${project.name}-${project.version}/library.properties" tofile="${project.dist.version}/web/download/${project.name}-${project.version}.txt" />
-		<copy file="${project.dist.version}/tmp/${project.name}-${project.version}/library.properties" tofile="${project.dist.version}/web/download/${project.name}-latest.txt" />
+  		<copy file="${project.dist.version}/tmp/${project.name}-${library.version}/library.properties" tofile="${project.dist.version}/web/download/${project.name}-${library.version}.txt" />
+		<copy file="${project.dist.version}/tmp/${project.name}-${library.version}/library.properties" tofile="${project.dist.version}/web/download/${project.name}-latest.txt" />
 		        
-		<zip destfile="${project.dist.version}/${project.name}-${project.version}.zip"
-  	       basedir="${project.dist.version}/tmp/${project.name}-${project.version}"
+		<zip destfile="${project.dist.version}/${project.name}-${library.version}.zip"
+  	       basedir="${project.dist.version}/tmp/${project.name}-${library.version}"
   	       excludes="**/.DS_Store"
 		/>
 		
-        <move file="${project.dist.version}/${project.name}-${project.version}.zip" todir="${project.dist.version}/web/download" />
-		<copy file="${project.dist.version}/web/download/${project.name}-${project.version}.zip" tofile="${project.dist.version}/web/download/${project.name}-latest.zip" />
+        <move file="${project.dist.version}/${project.name}-${library.version}.zip" todir="${project.dist.version}/web/download" />
+		<copy file="${project.dist.version}/web/download/${project.name}-${library.version}.zip" tofile="${project.dist.version}/web/download/${project.name}-latest.zip" />
 		
 		<move todir="${project.dist.version}">
 			<fileset dir="${project.dist.version}/web" />
@@ -345,18 +293,6 @@ ${line}
 		<delete dir="${project.dist.version}/tmp" />
 	</target>
 	
-	
-	
-	
-	<target name="versionSourcefile">
-		<echo message="${file}" />
-		<replaceregexp file="${file}" match="##author##" replace="${author.name} ${author.url}" flags="g" />
-		<replaceregexp file="${file}" match="##version##" replace="${project.version}" flags="g" />
-		<replaceregexp file="${file}" match="##date##" replace="${date}" flags="g" />
-		<replaceregexp file="${file}" match="##copyright##" replace="${project.copyright}" flags="g" />
-		<replaceregexp file="${file}" match="##name##" replace="${project.name}" flags="g" />
-		<replaceregexp file="${file}" match="##version##" replace="${project.version}" flags="g" />
-	</target>
 	
 	
 	<!-- parsing the examples folder -->
@@ -367,15 +303,6 @@ ${line}
 		</foreach>
 	</target>
 		
-	<!-- old example compiler
-	<target name="addExamples">
-		<echo message="adding example ${exampleDir}" />
-		<replaceregexp file="${project.dist.version}/web/index.html"
-	  				match="(##project.examples##)"
-	  	  			replace="&lt;li&gt;&lt;a href=&quot;examples/${exampleDir}/${exampleDir}.pde&quot;&gt;${exampleDir}&lt;/a&gt;&lt;/li&gt; \1"
-	  	  			flags="g" />
-	</target>
-	-->
 	
 	
 	<target name="addExamples">
@@ -397,7 +324,7 @@ ${line}
               <if>
  					<equals arg1="${data}" arg2="false" />
  				<then>
-   					<replaceregexp file="${dist}/web/index.html"
+   					<replaceregexp file="${project.dist.version}/web/index.html"
 	  					match="(##examples##)"
 	  	  				replace="&lt;li&gt;&lt;a href=&quot;examples/${exampleDir}/${pde}.pde&quot;&gt;${exampleDir}&lt;/a&gt;&lt;/li&gt; \1"
 	  	  				flags="g" />
@@ -408,16 +335,18 @@ ${line}
 			</if>
 	</target>
 	
+	
+	
 	<target name="clean" depends="library.run">
 		<delete dir="${project.bin}"/>
 		<delete dir="${project.tmp}"/>
 		<echo>
 		
 ${line}
-Name	${project.name} 
-Version	${project.version}
-Compiled	${project.compile}
-Sketchbook	${sketchbook.location}
+Name        ${project.name} 
+Version     ${library.prettyVersion} (${library.version})
+Compiled    ${project.compile}
+Sketchbook  ${sketchbook.location}
 ${line}
 done, finished.
 ${line}
