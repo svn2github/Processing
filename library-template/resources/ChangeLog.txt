@@ -1,3 +1,9 @@
+2011-11-03  Elie Zananiri
+      * version 0.4.1
+      * added the library.properties file, used for the library engine in Processing 2.0
+      * added new fields to build.properties to fill in the library.properties file
+      * the script now generates two copies of the zip and properties file: one with the version number appended and another with "latest" appended (for the Processing 2.0 library engine)
+
 2010-05-07  Andreas Schlegel
       * version 0.3.2
       * build.xml: removing delete tag for bin folder, did cause issues with class referencing inside eclipse
