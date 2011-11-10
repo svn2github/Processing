@@ -1,3 +1,7 @@
+2011-11-10  Elie Zananiri
+      * version 0.4.4
+      * updated the build script to use the correct delimiter based on the OS when parsing source files
+
 2011-11-09  Elie Zananiri
       * version 0.4.3
       * removed the "-latest" suffix from the generated file names as it could lead to confusion when unzipping the library
