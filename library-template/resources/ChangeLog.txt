@@ -1,3 +1,8 @@
+2011-11-09  Elie Zananiri
+      * version 0.4.3
+      * removed the "-latest" suffix from the generated file names as it could lead to confusion when unzipping the library
+      * added the version number to the download link text to avoid confusion with the pretty version string
+      
 2011-11-07  Elie Zananiri
       * version 0.4.2
       * fixed some warnings in the Ant build script
