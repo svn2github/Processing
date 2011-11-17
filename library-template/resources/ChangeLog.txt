@@ -1,3 +1,7 @@
+2011-11-17  Elie Zananiri
+      * version 0.4.5
+      * updated the library categories
+
 2011-11-10  Elie Zananiri
       * version 0.4.4
       * updated the build script to use the correct delimiter based on the OS when parsing source files
